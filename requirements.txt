@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+requests
+python-dotenv
+duckduckgo-search
+aiofiles
+jinja2

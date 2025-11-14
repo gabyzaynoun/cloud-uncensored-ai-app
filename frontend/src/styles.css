@@ -1,0 +1,253 @@
+:root {
+  --bg-page: #020617;
+  --bg-card: rgba(15, 23, 42, 0.95);
+  --border-subtle: rgba(148, 163, 184, 0.25);
+  --accent: #2563eb;
+  --accent-soft: #1d4ed8;
+  --accent-green: #16a34a;
+  --text-main: #e5e7eb;
+  --text-muted: #9ca3af;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px 12px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+  color: var(--text-main);
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 1000px;
+}
+
+h1 {
+  text-align: center;
+  margin: 0 0 8px;
+  font-size: 1.8rem;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.7);
+  padding: 16px 18px 18px;
+}
+
+.section {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.section h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.settings-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+select,
+input[type="number"],
+input[type="text"],
+textarea {
+  background: #020617;
+  color: var(--text-main);
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  padding: 6px 8px;
+  font-size: 0.9rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.system-prompt {
+  width: 100%;
+  min-height: 60px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+.system-controls {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.chat-box {
+  border: 1px solid var(--border-subtle);
+  background: #020617;
+  padding: 10px;
+  height: 380px;
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+.msg {
+  margin: 6px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  max-width: 78%;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+}
+
+.msg-user {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  margin-left: auto;
+  text-align: right;
+}
+
+.msg-ai {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  margin-right: auto;
+}
+
+.msg-search {
+  background: rgba(148, 163, 184, 0.25);
+  margin-right: auto;
+  font-size: 0.8rem;
+}
+
+.chat-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+.status-text {
+  color: var(--text-muted);
+}
+
+.input-row {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.input-row input[type="text"] {
+  flex: 1;
+  padding: 8px;
+}
+
+button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s ease, transform 0.05s ease;
+  white-space: nowrap;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
+.button-pill {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 6px 10px;
+}
+
+.button-pill:hover:not(:disabled) {
+  background: rgba(148, 163, 184, 0.1);
+}
+
+.image-section,
+.search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.image-actions,
+.search-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.image-section input,
+.search-section input {
+  width: 100%;
+  max-width: 600px;
+}
+
+.image-result img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--border-subtle);
+}
+
+.helper-row {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 720px) {
+  .settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chat-box {
+    height: 320px;
+  }
+}

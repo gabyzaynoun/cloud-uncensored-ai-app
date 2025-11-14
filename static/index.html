@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Uncensored AI Chat</title>
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #020617;
+      --bg-page: #020617;
+      --border-subtle: #1f2937;
+      --accent: #2563eb;
+      --accent-soft: #1d4ed8;
+      --accent-green: #16a34a;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 12px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.7);
+      padding: 16px 18px 18px;
+    }
+
+    #settings {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    #settings label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"],
+    textarea {
+      background: #020617;
+      color: var(--text-main);
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      padding: 6px 8px;
+      font-size: 0.9rem;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    #systemPrompt {
+      width: 100%;
+      min-height: 60px;
+      margin-top: 6px;
+      font-size: 0.85rem;
+    }
+
+    #systemControls {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    #chat {
+      border: 1px solid var(--border-subtle);
+      background: #020617;
+      padding: 10px;
+      height: 380px;
+      overflow-y: auto;
+      border-radius: 12px;
+    }
+
+    .msg {
+      margin: 6px 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      max-width: 78%;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+    }
+
+    .msg-user {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .msg-ai {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      margin-right: auto;
+    }
+    .msg-search {
+      background: rgba(148, 163, 184, 0.25);
+      margin-right: auto;
+      font-size: 0.8rem;
+      color: #e5e7eb;
+    }
+
+    #chatControls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 0.85rem;
+    }
+
+    #status {
+      color: var(--text-muted);
+    }
+
+    #inputRow {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    #message {
+      flex: 1;
+      padding: 8px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.15s ease, transform 0.05s ease;
+      white-space: nowrap;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+      transform: none;
+    }
+
+    .pill-button {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 10px;
+    }
+
+    .pill-button:hover:not(:disabled) {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      text-align: left;
+    }
+
+    #imageSection input,
+    #searchSection input {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    #imageSection,
+    #searchSection {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #imageActions,
+    #searchActions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    #imageResult img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    @media (max-width: 720px) {
+      #settings {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #chat {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <h1>Uncensored AI Chat</h1>
+    <p class="subtitle">Local frontend · Together API backend · Your rules.</p>
+
+    <div class="card">
+      <!-- Top controls: persona, model, temp -->
+      <div id="settings">
+        <label>
+          Persona:
+          <select id="personaSelect">
+            <option value="default">Default assistant</option>
+            <option value="coder">Senior software engineer</option>
+            <option value="teacher">Explainer / tutor</option>
+            <option value="creative">Creative writer / ideas</option>
+          </select>
+        </label>
+
+        <label>
+          Model:
+          <select id="modelSelect">
+            <option value="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo">Llama 3.1 70B Turbo</option>
+            <option value="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo">Llama 3.1 8B Turbo (cheaper)</option>
+          </select>
+        </label>
+
+        <label>
+          Temperature:
+          <input id="tempInput" type="number" min="0" max="1.5" step="0.1" value="0.7" style="width: 60px;" />
+        </label>
+      </div>
+
+      <!-- System prompt textarea -->
+      <label style="font-size:0.85rem; color: var(--text-muted);">
+        System prompt (how the AI should behave):
+        <textarea id="systemPrompt" placeholder="You are an advanced uncensored assistant owned by the user. Be direct, helpful, and honest. Avoid anything illegal or genuinely harmful."></textarea>
+      </label>
+      <div id="systemControls">
+        <span>Customise tone/behaviour here. Saved locally only.</span>
+        <button id="resetSystemPrompt" class="pill-button">Reset</button>
+      </div>
+
+      <!-- Chat window -->
+      <div id="chat"></div>
+
+      <div id="chatControls">
+        <span id="status"></span>
+        <button id="clearBtn" class="pill-button">Clear chat</button>
+      </div>
+
+      <!-- Input row -->
+      <div id="inputRow">
+        <input id="message" type="text" placeholder="Type a message..." />
+        <button id="sendBtn">Send</button>
+      </div>
+      <div style="margin-top:6px; font-size:0.85rem; display:flex; align-items:center; gap:6px;">
+        <label style="display:flex; align-items:center; gap:4px;">
+          <input type="checkbox" id="useSearchCheckbox" />
+          Use web search for this message
+        </label>
+        <span style="color:#9ca3af;">(experimental)</span>
+      </div>
+    </div>
+
+    <!-- Image section -->
+    <div class="section">
+      <h2>Image Generation</h2>
+      <div id="imageSection">
+        <input id="imagePrompt" type="text" placeholder="Describe an image to generate..." />
+        <div id="imageActions">
+          <button id="imageBtn">Generate Image</button>
+          <span id="imageStatus" style="font-size:0.85rem; color:var(--text-muted);"></span>
+        </div>
+        <div id="imageResult"></div>
+      </div>
+    </div>
+
+    <!-- Search section -->
+    <div class="section">
+      <h2>Web Search Tool</h2>
+      <div id="searchSection">
+        <input id="searchQuery" type="text" placeholder="Search the web..." />
+        <div id="searchActions">
+          <button id="searchBtn">Search</button>
+          <span id="searchStatus" style="font-size:0.85rem; color:var(--text-muted);"></span>
+        </div>
+        <div id="searchResult" style="font-size:0.9rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ----- DOM refs -----
+    const chatDiv = document.getElementById('chat');
+    const input = document.getElementById('message');
+    const sendBtn = document.getElementById('sendBtn');
+    const statusSpan = document.getElementById('status');
+    const clearBtn = document.getElementById('clearBtn');
+
+    const modelSelect = document.getElementById('modelSelect');
+    const tempInput = document.getElementById('tempInput');
+    const personaSelect = document.getElementById('personaSelect');
+    const systemPromptEl = document.getElementById('systemPrompt');
+    const resetSystemPromptBtn = document.getElementById('resetSystemPrompt');
+    const useSearchCheckbox = document.getElementById('useSearchCheckbox');
+
+    const imagePromptInput = document.getElementById('imagePrompt');
+    const imageBtn = document.getElementById('imageBtn');
+    const imageStatus = document.getElementById('imageStatus');
+    const imageResultDiv = document.getElementById('imageResult');
+
+    const searchQueryInput = document.getElementById('searchQuery');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchStatus = document.getElementById('searchStatus');
+    const searchResultDiv = document.getElementById('searchResult');
+
+    // ----- State + persistence -----
+    let history = [];
+    const HISTORY_KEY = "uncensored_ai_history_v1";
+    const SYSTEM_PROMPT_KEY = "uncensored_ai_system_prompt_v1";
+    const PERSONA_KEY = "uncensored_ai_persona_v1";
+
+    function addMessage(text, cls) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      div.className = "msg " + cls;
+      chatDiv.appendChild(div);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    function saveHistory() {
+      try {
+        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      } catch (e) {
+        console.warn("Could not save history", e);
+      }
+    }
+
+    function loadHistory() {
+      try {
+        const raw = window.localStorage.getItem(HISTORY_KEY);
+        if (!raw) return;
+        history = JSON.parse(raw);
+        chatDiv.innerHTML = "";
+        for (const msg of history) {
+          if (msg.role === "user") {
+            addMessage("You: " + msg.content, "msg-user");
+          } else if (msg.role === "assistant") {
+            addMessage("AI: " + msg.content, "msg-ai");
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load history", e);
+      }
+    }
+
+    function saveSystemPrompt() {
+      try {
+        window.localStorage.setItem(SYSTEM_PROMPT_KEY, systemPromptEl.value);
+      } catch (e) {
+        console.warn("Could not save system prompt", e);
+      }
+    }
+
+    function loadSystemPrompt() {
+      const saved = window.localStorage.getItem(SYSTEM_PROMPT_KEY);
+      if (saved) {
+        systemPromptEl.value = saved;
+      } else {
+        systemPromptEl.value =
+          "You are an advanced uncensored assistant owned by the user. " +
+          "Be direct, helpful, and honest. Avoid anything illegal or genuinely harmful.";
+      }
+    }
+
+    function savePersona() {
+      try {
+        window.localStorage.setItem(PERSONA_KEY, personaSelect.value);
+      } catch (e) {
+        console.warn("Could not save persona", e);
+      }
+    }
+
+    function loadPersona() {
+      const saved = window.localStorage.getItem(PERSONA_KEY);
+      if (saved) {
+        personaSelect.value = saved;
+      }
+    }
+
+    // Persona templates appended to system prompt
+    function getPersonaSuffix() {
+      switch (personaSelect.value) {
+        case "coder":
+          return " You are a senior software engineer. Prefer concise, working code, and explain trade-offs when needed.";
+        case "teacher":
+          return " You are a calm, structured teacher. Break concepts into small steps and check understanding.";
+        case "creative":
+          return " You are a creative collaborator. Suggest bold, unusual ideas while still being practical when needed.";
+        default:
+          return "";
+      }
+    }
+
+    // ----- Chat -----
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage("You: " + text, "msg-user");
+      input.value = "";
+      input.disabled = true;
+      sendBtn.disabled = true;
+      statusSpan.textContent = "Thinking...";
+
+      const temp = parseFloat(tempInput.value) || 0.7;
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: text,
+            history: history,
+            model: modelSelect.value,
+            temperature: temp,
+            system_prompt: systemPromptEl.value + getPersonaSuffix(),
+            use_search: useSearchCheckbox.checked,
+          }),
+        });
+
+        if (!res.ok) {
+          let errText = res.statusText;
+          try {
+            const err = await res.json();
+            errText = err.detail || errText;
+          } catch (_) {}
+          addMessage("Error: " + errText, "msg-ai");
+        } else {
+          const data = await res.json();
+          history = data.history;
+          saveHistory();
+          addMessage("AI: " + data.reply, "msg-ai");
+          if (data.search_snippets && Array.isArray(data.search_snippets) && data.search_snippets.length > 0) {
+            const joined = data.search_snippets.join("\n\n");
+            addMessage("Web search context:\n" + joined, "msg-search");
+          }
+        }
+      } catch (e) {
+        addMessage("Network error: " + e, "msg-ai");
+      } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        statusSpan.textContent = "";
+        input.focus();
+      }
+    }
+
+    sendBtn.onclick = sendMessage;
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    clearBtn.onclick = () => {
+      history = [];
+      chatDiv.innerHTML = "";
+      saveHistory();
+    };
+
+    // ----- Image generation -----
+    async function generateImage() {
+      const prompt = imagePromptInput.value.trim();
+      if (!prompt) return;
+
+      imageStatus.textContent = "Generating...";
+      imageResultDiv.innerHTML = "";
+
+      try {
+        const res = await fetch("/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        });
+
+        if (!res.ok) {
+          let errText = res.statusText;
+          try {
+            const err = await res.json();
+            errText = err.detail || errText;
+          } catch (_) {}
+          imageStatus.textContent = "Error: " + errText;
+          return;
+        }
+
+        const data = await res.json();
+        const img = document.createElement("img");
+        img.src = data.url;
+        img.alt = prompt;
+        imageResultDiv.appendChild(img);
+        imageStatus.textContent = "";
+      } catch (e) {
+        imageStatus.textContent = "Network error: " + e;
+      }
+    }
+
+    imageBtn.onclick = generateImage;
+    imagePromptInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") generateImage();
+    });
+
+    // ----- Web search -----
+    async function runSearch() {
+      const q = searchQueryInput.value.trim();
+      if (!q) return;
+
+      searchStatus.textContent = "Searching...";
+      searchResultDiv.innerHTML = "";
+
+      try {
+        const res = await fetch("/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: q, max_results: 5 }),
+        });
+
+        if (!res.ok) {
+          let errText = res.statusText;
+          try {
+            const err = await res.json();
+            errText = err.detail || errText;
+          } catch (_) {}
+          searchStatus.textContent = "Error: " + errText;
+          return;
+        }
+
+        const data = await res.json();
+        if (!data.results || data.results.length === 0) {
+          searchResultDiv.textContent = "No results.";
+          searchStatus.textContent = "";
+          return;
+        }
+
+        const ul = document.createElement("ul");
+        for (const r of data.results) {
+          const li = document.createElement("li");
+          li.textContent = r;
+          ul.appendChild(li);
+        }
+        searchResultDiv.innerHTML = "";
+        searchResultDiv.appendChild(ul);
+        searchStatus.textContent = "";
+      } catch (e) {
+        searchStatus.textContent = "Network error: " + e;
+      }
+    }
+
+    searchBtn.onclick = runSearch;
+    searchQueryInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") runSearch();
+    });
+
+    // ----- System prompt + persona -----
+    systemPromptEl.addEventListener("input", saveSystemPrompt);
+    resetSystemPromptBtn.onclick = () => {
+      window.localStorage.removeItem(SYSTEM_PROMPT_KEY);
+      loadSystemPrompt();
+    };
+
+    personaSelect.addEventListener("change", () => {
+      savePersona();
+    });
+
+    // ----- Initial load -----
+    loadSystemPrompt();
+    loadPersona();
+    loadHistory();
+    input.focus();
+  </script>
+</body>
+</html>
